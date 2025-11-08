@@ -192,7 +192,7 @@ const AuthPage = ({ onBackToDemo = () => {} }) => {
               🌍 My Travel Buddy
             </div>
             <button 
-  onClick={() => window.location.href = '../travel2a.html'}
+  onClick={() => window.location.href = '../index.html'}
   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2">
   <ArrowLeft className="w-4 h-4" />
   Back to Home
@@ -265,7 +265,7 @@ const AuthPage = ({ onBackToDemo = () => {} }) => {
             🌍 My Travel Buddy
           </div>
           <button 
-  onClick={() => window.location.href = '../travel2a.html'}
+  onClick={() => window.location.href = '../index.html'}
   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2">
   <ArrowLeft className="w-4 h-4" />
   Back to Home
