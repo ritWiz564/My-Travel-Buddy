@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Your Trip - My Travel Buddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <!-- React & Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="text/babel">
+const { useState } = React;
+
+const TravelPlanningApp = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState({
+    destination: '',
+    startDate: '',
+    endDate: '',
+    budget: '',
+    travelers: '',
+    style: '',
+    accommodation: '',
+    hiddenGems: false
+  });
+  const [generatedItinerary, setGeneratedItinerary] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const destinations = {
+    goa: { name: 'Goa', emoji: '🏖️' },
+    manali: { name: 'Manali', emoji: '🏔️' },
+    jaipur: { name: 'Jaipur', emoji: '🕌' },
+    kerala: { name: 'Kerala', emoji: '🌴' },
+    ladakh: { name: 'Ladakh', emoji: '⛰️' },
+    rishikesh: { name: 'Rishikesh', emoji: '🕉️' }
+  };
+
+  const weatherData = {
+    goa: {
+      seasons: {
+        winter: { months: [11, 12, 1, 2], temp: '20-30°C', condition: 'Pleasant & Sunny', icon: '☀️' },
+        summer: { months: [3, 4, 5], temp: '28-35°C', condition: 'Hot & Humid', icon: '🌡️' },
+        monsoon: { months: [6, 7, 8, 9, 10], temp: '25-30°C', condition: 'Rainy', icon: '🌧️' }
+      },
+      clothing: {
+        winter: ['Light cotton clothes', 'Sunglasses', 'Beachwear', 'Light jacket'],
+        summer: ['Breathable wear', 'Sunscreen', 'Hat', 'Swimwear'],
+        monsoon: ['Waterproof jacket', 'Quick-dry clothes', 'Umbrella']
+      },
+      medicalKit: ['Sunscreen SPF 50+', 'Anti-diarrheal', 'Antihistamines', 'Mosquito repellent', 'First-aid kit']
+    },
+    manali: {
+      seasons: {
+        winter: { months: [12, 1, 2], temp: '-2 to 10°C', condition: 'Cold & Snowy', icon: '❄️' },
+        summer: { months: [6, 7, 8], temp: '15-25°C', condition: 'Cool & Pleasant', icon: '☀️' },
+        spring: { months: [3, 4, 5], temp: '10-20°C', condition: 'Pleasant', icon: '🌸' },
+        autumn: { months: [9, 10, 11], temp: '5-15°C', condition: 'Cool', icon: '🍂' }
+      },
+      clothing: {
+        winter: ['Heavy woolens', 'Down jacket', 'Thermal wear', 'Gloves', 'Snow boots'],
+        summer: ['Light woolens', 'T-shirts', 'Jacket', 'Trekking shoes'],
+        spring: ['Light woolens', 'Jacket', 'Layered clothing'],
+        autumn: ['Warm clothes', 'Jacket', 'Closed shoes']
+      },
+      medicalKit: ['Altitude sickness meds', 'Pain relievers', 'Lip balm', 'Moisturizer', 'Cold medicine']
+    },
+    jaipur: {
+      seasons: {
+        winter: { months: [11, 12, 1, 2], temp: '10-25°C', condition: 'Pleasant', icon: '☀️' },
+        summer: { months: [3, 4, 5, 6], temp: '30-45°C', condition: 'Very Hot', icon: '🌡️' },
+        monsoon: { months: [7, 8, 9], temp: '25-35°C', condition: 'Humid & Rainy', icon: '🌧️' },
+        autumn: { months: [10], temp: '20-30°C', condition: 'Pleasant', icon: '🍂' }
+      },
+      clothing: {
+        winter: ['Light woolens', 'Cotton clothes', 'Shawl', 'Walking shoes'],
+        summer: ['Light cotton', 'Sunglasses', 'Hat', 'Sunscreen'],
+        monsoon: ['Rain jacket', 'Umbrella', 'Covered footwear'],
+        autumn: ['Light cotton', 'Light jacket']
+      },
+      medicalKit: ['ORS', 'Sunscreen SPF 50+', 'Heat rash powder', 'Stomach meds', 'Pain relievers']
+    },
+    kerala: {
+      seasons: {
+        winter: { months: [12, 1, 2], temp: '23-32°C', condition: 'Pleasant', icon: '☀️' },
+        summer: { months: [3, 4, 5], temp: '28-36°C', condition: 'Hot & Humid', icon: '🌡️' },
+        monsoon: { months: [6, 7, 8, 9, 10, 11], temp: '24-30°C', condition: 'Heavy Rain', icon: '🌧️' }
+      },
+      clothing: {
+        winter: ['Light cotton', 'Swimwear', 'Sandals', 'Sun protection'],
+        summer: ['Breathable fabrics', 'Hat', 'Sunglasses', 'Swimwear'],
+        monsoon: ['Waterproof jacket', 'Quick-dry clothes', 'Waterproof footwear']
+      },
+      medicalKit: ['Anti-malarial', 'Mosquito repellent', 'Anti-diarrheal', 'Antiseptic', 'Waterproof bandages']
+    },
+    ladakh: {
+      seasons: {
+        summer: { months: [5, 6, 7, 8, 9], temp: '15-25°C day', condition: 'Pleasant days, cold nights', icon: '☀️' },
+        winter: { months: [10, 11, 12, 1, 2, 3, 4], temp: '-20 to 5°C', condition: 'Extremely Cold', icon: '❄️' }
+      },
+      clothing: {
+        summer: ['Layered clothing', 'Warm jacket', 'Thermal wear', 'Sunglasses', 'Trekking shoes'],
+        winter: ['Heavy winter gear', 'Multiple layers', 'Down jacket', 'Snow boots', 'Gloves']
+      },
+      medicalKit: ['Altitude sickness meds', 'Oxygen (if needed)', 'Lip balm SPF', 'Sunscreen SPF 50+', 'Energy bars']
+    },
+    rishikesh: {
+      seasons: {
+        winter: { months: [11, 12, 1, 2], temp: '10-20°C', condition: 'Cool', icon: '☀️' },
+        summer: { months: [3, 4, 5, 6], temp: '25-40°C', condition: 'Hot', icon: '🌡️' },
+        monsoon: { months: [7, 8, 9], temp: '25-30°C', condition: 'Rainy', icon: '🌧️' },
+        autumn: { months: [10], temp: '15-25°C', condition: 'Pleasant', icon: '🍂' }
+      },
+      clothing: {
+        winter: ['Light woolens', 'Jacket', 'Yoga clothes', 'Closed shoes'],
+        summer: ['Light cotton', 'Hat', 'Swimwear for rafting'],
+        monsoon: ['Waterproof gear', 'Quick-dry clothes', 'Rain jacket'],
+        autumn: ['Light layers', 'Comfortable wear', 'Walking shoes']
+      },
+      medicalKit: ['Motion sickness pills', 'Anti-diarrheal', 'Pain relievers', 'Band-aids', 'Mosquito repellent']
+    }
+  };
+
+  const destinationPlaces = {
+    goa: {
+      regular: [
+        { name: 'Baga Beach', time: 'Morning', activity: 'Beach & water sports' },
+        { name: 'Fort Aguada', time: 'Afternoon', activity: 'Historic fort' },
+        { name: 'Basilica', time: 'Evening', activity: 'UNESCO site' }
+      ],
+      hidden: [
+        { name: 'Butterfly Beach', time: 'Morning', activity: 'Secluded beach', isHidden: true },
+        { name: 'Divar Island', time: 'Afternoon', activity: 'Rural cycling', isHidden: true }
+      ]
+    },
+    manali: {
+      regular: [
+        { name: 'Rohtang Pass', time: 'Morning', activity: 'Snow activities' },
+        { name: 'Solang Valley', time: 'Afternoon', activity: 'Paragliding' },
+        { name: 'Hadimba Temple', time: 'Evening', activity: 'Ancient temple' }
+      ],
+      hidden: [
+        { name: 'Jogini Waterfalls', time: 'Morning', activity: 'Hidden trek', isHidden: true },
+        { name: 'Jana Waterfall', time: 'Afternoon', activity: 'Off-beat escape', isHidden: true }
+      ]
+    },
+    jaipur: {
+      regular: [
+        { name: 'Hawa Mahal', time: 'Morning', activity: 'Palace photography' },
+        { name: 'Amber Fort', time: 'Afternoon', activity: 'Elephant ride' },
+        { name: 'City Palace', time: 'Evening', activity: 'Royal museum' }
+      ],
+      hidden: [
+        { name: 'Panna Meena Kund', time: 'Morning', activity: 'Ancient stepwell', isHidden: true },
+        { name: 'Galtaji Temple', time: 'Afternoon', activity: 'Monkey temple', isHidden: true }
+      ]
+    },
+    kerala: {
+      regular: [
+        { name: 'Alleppey Backwaters', time: 'Morning', activity: 'Houseboat cruise' },
+        { name: 'Munnar Tea Gardens', time: 'Afternoon', activity: 'Tea tour' },
+        { name: 'Kovalam Beach', time: 'Evening', activity: 'Beach & lighthouse' }
+      ],
+      hidden: [
+        { name: 'Vagamon Meadows', time: 'Morning', activity: 'Misty hills', isHidden: true },
+        { name: 'Gavi Eco-Tourism', time: 'Afternoon', activity: 'Forest adventures', isHidden: true }
+      ]
+    },
+    ladakh: {
+      regular: [
+        { name: 'Pangong Lake', time: 'Morning', activity: 'Lake photography' },
+        { name: 'Nubra Valley', time: 'Afternoon', activity: 'Sand dunes & camels' },
+        { name: 'Khardung La', time: 'Evening', activity: 'Highest road' }
+      ],
+      hidden: [
+        { name: 'Tso Moriri Lake', time: 'Morning', activity: 'Remote lake', isHidden: true },
+        { name: 'Hanle Observatory', time: 'Night', activity: 'Stargazing', isHidden: true }
+      ]
+    },
+    rishikesh: {
+      regular: [
+        { name: 'Laxman Jhula', time: 'Morning', activity: 'Bridge walk' },
+        { name: 'Beatles Ashram', time: 'Afternoon', activity: 'Graffiti & meditation' },
+        { name: 'Triveni Ghat', time: 'Evening', activity: 'Ganga Aarti' }
+      ],
+      hidden: [
+        { name: 'Kunjapuri Trek', time: 'Early Morning', activity: 'Sunrise views', isHidden: true },
+        { name: 'Patna Waterfall', time: 'Afternoon', activity: 'Hidden cascade', isHidden: true }
+      ]
+    }
+  };
+
+  const getSeasonFromMonth = (month, destination) => {
+    const seasons = weatherData[destination].seasons;
+    for (const [season, data] of Object.entries(seasons)) {
+      if (data.months.includes(month)) {
+        return { season, ...data };
+      }
+    }
+    return Object.values(seasons)[0];
+  };
+
+  const validateStep = (step) => {
+    if (step === 1) {
+      if (!formData.destination || !formData.startDate || !formData.endDate) {
+        alert('Please fill in all fields');
+        return false;
+      }
+      if (new Date(formData.endDate) < new Date(formData.startDate)) {
+        alert('End date cannot be before start date');
+        return false;
+      }
+    } else if (step === 2) {
+      if (!formData.budget || !formData.travelers || !formData.style || !formData.accommodation) {
+        alert('Please fill in all fields');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const calculateDays = () => {
+    if (!formData.startDate || !formData.endDate) return 0;
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+    return Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
+  };
+
+  const handleSubmit = () => {
+    setIsGenerating(true);
+    
+    setTimeout(() => {
+      const days = calculateDays();
+      const destData = destinations[formData.destination];
+      const regularPlaces = destinationPlaces[formData.destination].regular;
+      const hiddenPlaces = formData.hiddenGems ? destinationPlaces[formData.destination].hidden : [];
+      const allPlaces = [...regularPlaces, ...hiddenPlaces];
+      
+      const startMonth = new Date(formData.startDate).getMonth() + 1;
+      const seasonInfo = getSeasonFromMonth(startMonth, formData.destination);
+      const destWeather = weatherData[formData.destination];
+      
+      const itinerary = {
+        destination: destData.name,
+        destinationIcon: destData.emoji,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        days: days,
+        budget: formData.budget,
+        travelers: formData.travelers,
+        style: formData.style.charAt(0).toUpperCase() + formData.style.slice(1),
+        accommodation: formData.accommodation.charAt(0).toUpperCase() + formData.accommodation.slice(1),
+        hiddenGems: formData.hiddenGems,
+        weather: {
+          season: seasonInfo.season,
+          temp: seasonInfo.temp,
+          condition: seasonInfo.condition,
+          icon: seasonInfo.icon,
+          clothing: destWeather.clothing[seasonInfo.season] || [],
+          medicalKit: destWeather.medicalKit
+        },
+        dailyPlans: [],
+        budgetBreakdown: {
+          transportation: Math.floor(formData.budget * 0.3),
+          accommodation: Math.floor(formData.budget * 0.35),
+          activities: Math.floor(formData.budget * 0.25),
+          food: Math.floor(formData.budget * 0.10)
+        }
+      };
+
+      let placeIndex = 0;
+      for (let day = 1; day <= days; day++) {
+        const dayPlaces = [];
+        for (let i = 0; i < Math.min(3, allPlaces.length); i++) {
+          if (placeIndex >= allPlaces.length) placeIndex = 0;
+          dayPlaces.push(allPlaces[placeIndex++]);
+        }
+        itinerary.dailyPlans.push({
+          day: day,
+          places: dayPlaces,
+          cost: Math.floor(formData.budget / days)
+        });
+      }
+
+      setGeneratedItinerary(itinerary);
+      setIsGenerating(false);
+      setCurrentStep(4);
+    }, 2000);
+  };
+
+  const downloadPDF = () => {
+    if (!generatedItinerary) return;
+
+    let content = `MY TRAVEL BUDDY - ITINERARY\n${'='.repeat(70)}\n\n`;
+    content += `${generatedItinerary.destinationIcon} ${generatedItinerary.destination}\n`;
+    content += `Dates: ${generatedItinerary.startDate} to ${generatedItinerary.endDate}\n`;
+    content += `Duration: ${generatedItinerary.days} days\n`;
+    content += `Budget: ₹${parseInt(generatedItinerary.budget).toLocaleString()}\n\n`;
+    
+    content += `WEATHER\n${'-'.repeat(70)}\n`;
+    content += `${generatedItinerary.weather.icon} ${generatedItinerary.weather.condition}\n`;
+    content += `Temp: ${generatedItinerary.weather.temp}\n\n`;
+    
+    content += `PACKING LIST:\n`;
+    generatedItinerary.weather.clothing.forEach(item => content += `✓ ${item}\n`);
+    content += `\nMEDICAL KIT:\n`;
+    generatedItinerary.weather.medicalKit.forEach(item => content += `+ ${item}\n`);
+    content += `\n${'='.repeat(70)}\n\n`;
+    
+    generatedItinerary.dailyPlans.forEach(day => {
+      content += `DAY ${day.day} - ₹${day.cost.toLocaleString()}\n`;
+      day.places.forEach(p => {
+        content += `📍 ${p.name}${p.isHidden ? ' 💎' : ''}\n`;
+        content += `   ${p.time} - ${p.activity}\n`;
+      });
+      content += `\n`;
+    });
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${generatedItinerary.destination}-Itinerary.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ Downloaded!');
+  };
+
+  const sharePDF = () => {
+    const text = `My ${generatedItinerary.days}-day trip to ${generatedItinerary.destination}! ✈️\nBudget: ₹${parseInt(generatedItinerary.budget).toLocaleString()}`;
+    if (navigator.share) {
+      navigator.share({ title: 'My Trip', text }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text).then(() => alert('✅ Copied!'));
+    }
+  };
+
+  const handleClose = () => {
+    if (confirm('Close? Progress will be lost.')) window.close();
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-white rounded-t-3xl shadow-lg p-6 flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-800">✈️ Plan Your Trip</h1>
+          <button onClick={handleClose} className="text-3xl hover:bg-gray-100 rounded-full w-10 h-10">×</button>
+        </div>
+
+        {currentStep < 4 && (
+          <div className="bg-white px-6 py-4">
+            <div className="flex justify-between mb-2">
+              {['Destination', 'Preferences', 'Review'].map((s, i) => (
+                <div key={i} className={`flex-1 text-center ${currentStep > i+1 ? 'text-purple-600 font-semibold' : currentStep === i+1 ? 'text-purple-600 font-bold' : 'text-gray-400'}`}>{s}</div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              {[1,2,3].map(s => <div key={s} className={`flex-1 h-2 rounded-full ${currentStep >= s ? 'bg-purple-600' : 'bg-gray-200'}`} />)}
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white rounded-b-3xl shadow-lg p-8 max-h-[75vh] overflow-y-auto">
+          {currentStep === 1 && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold">Where and When?</h2>
+              <div>
+                <label className="block font-semibold mb-3">🌍 Select Destination</label>
+                <div className="grid grid-cols-3 gap-4">
+                  {Object.entries(destinations).map(([k, d]) => (
+                    <button key={k} onClick={() => setFormData({...formData, destination: k})}
+                      className={`p-6 rounded-xl border-2 transition ${formData.destination === k ? 'border-purple-600 bg-purple-50 scale-105' : 'border-gray-200 hover:border-purple-300'}`}>
+                      <div className="text-4xl mb-2">{d.emoji}</div>
+                      <div className="font-semibold">{d.name}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-semibold mb-2">📅 Start Date</label>
+                  <input type="date" value={formData.startDate} onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                    className="w-full p-3 border-2 rounded-lg focus:border-purple-600 outline-none" />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-2">📅 End Date</label>
+                  <input type="date" value={formData.endDate} onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                    className="w-full p-3 border-2 rounded-lg focus:border-purple-600 outline-none" />
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <button disabled className="flex-1 py-3 bg-gray-200 text-gray-400 rounded-lg font-semibold cursor-not-allowed">Previous</button>
+                <button onClick={() => validateStep(1) && setCurrentStep(2)} className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold">Next</button>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold">Your Preferences</h2>
+              <div>
+                <label className="block font-semibold mb-2">💰 Budget (₹)</label>
+                <input type="number" placeholder="e.g., 50000" value={formData.budget} onChange={(e) => setFormData({...formData, budget: e.target.value})}
+                  className="w-full p-3 border-2 rounded-lg focus:border-purple-600 outline-none" />
+              </div>
+              <div>
+                <label className="block font-semibold mb-2">🧑‍🤝‍🧑 Travelers</label>
+                <input type="number" placeholder="e.g., 2" min="1" value={formData.travelers} onChange={(e) => setFormData({...formData, travelers: e.target.value})}
+                  className="w-full p-3 border-2 rounded-lg focus:border-purple-600 outline-none" />
+              </div>
+              <div>
+                <label className="block font-semibold mb-2">🎨 Travel Style</label>
+                <select value={formData.style} onChange={(e) => setFormData({...formData, style: e.target.value})}
+                  className="w-full p-3 border-2 rounded-lg focus:border-purple-600 outline-none">
+                  <option value="">Select</option>
+                  <option value="adventure">Adventure</option>
+                  <option value="relaxation">Relaxation</option>
+                  <option value="cultural">Cultural</option>
+                  <option value="romantic">Romantic</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  🏨 Type of Stay
+                </label>
+                <select
+                  value={formData.accommodation}
+                  onChange={(e) => setFormData({ ...formData, accommodation: e.target.value })}
+                  className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-purple-600 focus:outline-none"
+                >
+                  <option value="">Select Accommodation</option>
+                  <option value="hotel">🏨 Hotel (Comfortable & Service)</option>
+                  <option value="guesthouse">🏡 Guest House (Cozy & Budget)</option>
+                  <option value="homestay">🏠 Homestay (Local Experience)</option>
+                  <option value="resort">🌴 Resort (Luxury & Amenities)</option>
+                  <option value="hostel">🛏️ Hostel (Backpacker Friendly)</option>
+                </select>
+              </div>
+              <div className="bg-purple-50 rounded-xl p-4 border-2 border-purple-200 flex items-center justify-between">
+                <div>
+                  <div className="font-semibold">💎 Include Hidden Gems</div>
+                  <div className="text-sm text-gray-600">Discover secret spots</div>
+                </div>
+                <button onClick={() => setFormData({...formData, hiddenGems: !formData.hiddenGems})}
+                  className={`relative inline-flex h-8 w-14 items-center rounded-full ${formData.hiddenGems ? 'bg-purple-600' : 'bg-gray-300'}`}>
+                  <span className={`inline-block h-6 w-6 rounded-full bg-white transition ${formData.hiddenGems ? 'translate-x-7' : 'translate-x-1'}`} />
+                </button>
+              </div>
+              <div className="flex gap-4">
+                <button onClick={() => setCurrentStep(1)} className="flex-1 py-3 bg-gray-200 rounded-lg font-semibold">Previous</button>
+                <button onClick={() => validateStep(2) && setCurrentStep(3)} className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold">Next</button>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold">Review Your Plan</h2>
+              <div className="bg-gray-50 rounded-xl p-6 space-y-3 text-sm">
+                <div className="flex justify-between"><span className="font-semibold">🌍 Destination:</span><span>{destinations[formData.destination]?.name}</span></div>
+                <div className="flex justify-between"><span className="font-semibold">📅 Dates:</span><span>{formData.startDate} to {formData.endDate} ({calculateDays()} days)</span></div>
+                <div className="flex justify-between"><span className="font-semibold">💰 Budget:</span><span>₹{parseInt(formData.budget || 0).toLocaleString()}</span></div>
+                <div className="flex justify-between"><span className="font-semibold">🧑‍🤝‍🧑 Travelers:</span><span>{formData.travelers}</span></div>
+                <div className="flex justify-between"><span className="font-semibold">🎨 Style:</span><span>{formData.style?.charAt(0).toUpperCase() + formData.style?.slice(1)}</span></div>
+                <div className="flex justify-between"><span className="font-semibold">🏨 Stay:</span><span>{formData.accommodation?.charAt(0).toUpperCase() + formData.accommodation?.slice(1)}</span></div>
+                <div className="flex justify-between"><span className="font-semibold">💎 Hidden Gems:</span><span>{formData.hiddenGems ? 'Yes' : 'No'}</span></div>
+              </div>
+              <div className="flex gap-4">
+                <button onClick={() => setCurrentStep(2)} className="flex-1 py-3 bg-gray-200 rounded-lg font-semibold">Previous</button>
+                <button onClick={handleSubmit} disabled={isGenerating} className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold disabled:opacity-50">
+                  {isGenerating ? '⏳ Generating...' : '🚀 Generate Itinerary'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 4 && generatedItinerary && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-3xl font-bold text-purple-600 mb-2">🎉 Your Itinerary is Ready!</h2>
+                <p className="text-gray-600">Review your personalized travel plan</p>
+              </div>
+
+              {/* Trip Summary */}
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border-2 border-purple-200">
+                <h3 className="text-2xl font-bold mb-4">{generatedItinerary.destinationIcon} {generatedItinerary.destination} {generatedItinerary.style} Adventure</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="bg-white rounded-lg p-3">
+                    <div className="text-gray-600 mb-1">Duration</div>
+                    <div className="font-bold text-purple-600">{generatedItinerary.days} days</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-3">
+                    <div className="text-gray-600 mb-1">Budget</div>
+                    <div className="font-bold text-purple-600">₹{parseInt(generatedItinerary.budget).toLocaleString()}</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-3">
+                    <div className="text-gray-600 mb-1">Travelers</div>
+                    <div className="font-bold text-purple-600">{generatedItinerary.travelers}</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-3">
+                    <div className="text-gray-600 mb-1">Stay</div>
+                    <div className="font-bold text-purple-600">{generatedItinerary.accommodation}</div>
+                  </div>
+                </div>
+                {generatedItinerary.hiddenGems && (
+                  <div className="mt-4 bg-purple-100 rounded-lg p-3 flex items-center gap-2">
+                    <span>👁️</span>
+                    <span className="text-purple-800 font-semibold">Hidden Gems Included! 💎</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Weather Section */}
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-200">
+                <h3 className="text-xl font-bold mb-4">☁️ Weather & Packing Guide</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-lg p-4">
+                    <h4 className="font-bold mb-3 flex items-center gap-2">
+                      <span className="text-2xl">{generatedItinerary.weather.icon}</span>
+                      <span>Expected Weather</span>
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <div><span className="text-gray-600">Temperature:</span> <span className="font-semibold">{generatedItinerary.weather.temp}</span></div>
+                      <div><span className="text-gray-600">Condition:</span> <span className="font-semibold">{generatedItinerary.weather.condition}</span></div>
+                      <div><span className="text-gray-600">Season:</span> <span className="font-semibold capitalize">{generatedItinerary.weather.season}</span></div>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg p-4">
+                    <h4 className="font-bold mb-3">👕 What to Pack</h4>
+                    <div className="space-y-1.5 text-sm">
+                      {generatedItinerary.weather.clothing.map((item, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="text-green-600">✓</span>
+                          <span className="text-gray-700">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 bg-white rounded-lg p-4">
+                  <h4 className="font-bold mb-3 flex items-center gap-2">
+                    <span className="text-red-600">🏥</span>
+                    <span>Medical Kit Essentials</span>
+                  </h4>
+                  <div className="grid md:grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+                    {generatedItinerary.weather.medicalKit.map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className="text-red-500">+</span>
+                        <span className="text-gray-700">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Day-by-Day */}
+              <div>
+                <h3 className="text-xl font-bold mb-4">📅 Day-by-Day Itinerary</h3>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {generatedItinerary.dailyPlans.map((day) => (
+                    <div key={day.day} className="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-purple-300 transition">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-lg font-bold">Day {day.day}</h4>
+                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                          ₹{day.cost.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="space-y-3">
+                        {day.places.map((place, i) => (
+                          <div key={i} className="flex gap-3 items-start">
+                            <div className={place.isHidden ? 'text-purple-600' : 'text-blue-600'}>
+                              {place.isHidden ? '💎' : '📍'}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h5 className="font-semibold text-gray-800">{place.name}</h5>
+                                {place.isHidden && (
+                                  <span className="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full font-semibold">
+                                    Hidden Gem
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-sm text-gray-600 mt-1">
+                                <span className="font-medium">{place.time}</span> • {place.activity}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Budget Breakdown */}
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
+                <h3 className="text-xl font-bold mb-4">💰 Budget Breakdown</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span>✈️ Transportation</span>
+                    <span className="font-bold">₹{generatedItinerary.budgetBreakdown.transportation.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>🏨 Accommodation</span>
+                    <span className="font-bold">₹{generatedItinerary.budgetBreakdown.accommodation.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>🎯 Activities</span>
+                    <span className="font-bold">₹{generatedItinerary.budgetBreakdown.activities.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>🍽️ Food</span>
+                    <span className="font-bold">₹{generatedItinerary.budgetBreakdown.food.toLocaleString()}</span>
+                  </div>
+                  <div className="pt-3 border-t-2 border-green-300 flex justify-between">
+                    <span className="font-bold">Total Budget</span>
+                    <span className="font-bold text-green-600 text-xl">₹{parseInt(generatedItinerary.budget).toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-4">
+                <button onClick={downloadPDF} className="flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition">
+                  📄 Download
+                </button>
+                <button onClick={sharePDF} className="flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition">
+                  🔗 Share
+                </button>
+              </div>
+
+              <button onClick={handleClose} className="w-full py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition">
+                Close & Clear
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.render(<TravelPlanningApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

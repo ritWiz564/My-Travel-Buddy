@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Travel Buddy - Smart Travel Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="planning.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">🌍 My Travel Buddy</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="build/index.html">Demo</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="javascript:void(0)" onclick="openModal('contactModal')">Contact</a></li>
+        </ul>
+        <a href="build/index.html#auth" style="text-decoration: none;">
+    <button class="cta-button">Sign In / Register</button>
+</a>
+    </nav>
+    
+
+        <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Plan Smarter. Travel Better.</h1>
+            <p>Your AI-powered travel planner that fits your budget and style.</p>
+            <div class="hero-buttons">
+            <button class="btn-primary" onclick="checkAuthAndPlan()">Start Planning</button>                
+            <button class="btn-secondary" onclick="window.location.href='build/index.html'">Explore Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Why Choose My Travel Buddy?</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-icon">💰</span>
+                <h3>Budget Planning</h3>
+                <p>Set your budget and get optimized itineraries that maximize your experience.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🧭</span>
+                <h3>Smart Itinerary</h3>
+                <p>Daily travel plans with intelligent commute options and timing.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🗺️</span>
+                <h3>Maps Integration</h3>
+                <p>Visualize routes and attractions seamlessly with interactive maps.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">✈️</span>
+                <h3>Flight & Hotels</h3>
+                <p>See realistic travel options within your budget constraints.</p>
+            </div>
+        </div>
+    </section>
+
+<!-- Interactive Demo Section - Isolated Styles -->
+<section class="demo-section-isolated" id="demo">
+    <h2 class="demo-isolated-title">✨ Try It Now</h2>
+    <div class="demo-isolated-container">
+        <div class="demo-isolated-form">
+            <div class="demo-form-group">
+                <label for="budget-demo">💰 Budget (₹)</label>
+                <input type="number" id="budget-demo" placeholder="e.g., 50000" min="5000" step="1000">
+            </div>
+            <div class="demo-form-group">
+                <label for="days-demo">📅 Number of Days</label>
+                <input type="number" id="days-demo" placeholder="e.g., 5" min="1" max="30">
+            </div>
+            <div class="demo-form-group">
+                <label for="style-demo">🎨 Travel Style</label>
+                <select id="style-demo">
+                    <option value="">Select Style</option>
+                    <option value="adventure">Adventure</option>
+                    <option value="relaxation">Relaxation</option>
+                    <option value="cultural">Cultural</option>
+                    <option value="romantic">Romantic</option>
+                </select>
+            </div>
+        </div>
+
+        <label class="demo-destination-label">🌍 Select Destination</label>
+        <div class="demo-destination-grid" id="destinationGridDemo">
+            <!-- Destinations will be populated by JavaScript -->
+        </div>
+
+        <button class="demo-generate-btn" id="generateBtnDemo">
+            <span id="btnTextDemo">🚀 Generate My Itinerary</span>
+        </button>
+
+        <div class="demo-results-container" id="resultsContainerDemo">
+            <!-- Results will be inserted here -->
+        </div>
+
+        <div class="demo-placeholder" id="placeholderDemo">
+            <div class="demo-placeholder-icon">🗺️</div>
+            <h3>Your Adventure Awaits!</h3>
+            <p>Fill in your travel preferences and let us create the perfect itinerary for you</p>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    // Wrap everything in IIFE to avoid global scope pollution
+    const demoDestinations = {
+        goa: {
+            name: 'Goa',
+            icon: '🏖️',
+            places: [
+                { name: 'Baga Beach', time: 'Morning', activity: 'Beach activities & water sports' },
+                { name: 'Fort Aguada', time: 'Morning', activity: 'Historic fort exploration' },
+                { name: 'Basilica of Bom Jesus', time: 'Afternoon', activity: 'UNESCO World Heritage site visit' },
+                { name: 'Dudhsagar Waterfalls', time: 'Morning', activity: 'Trekking & nature photography' },
+                { name: 'Anjuna Flea Market', time: 'Evening', activity: 'Shopping & local culture' },
+                { name: 'Chapora Fort', time: 'Afternoon', activity: 'Scenic views & photography' },
+                { name: 'Palolem Beach', time: 'Evening', activity: 'Sunset & relaxation' },
+                { name: 'Spice Plantation', time: 'Afternoon', activity: 'Guided tour & traditional lunch' },
+                { name: 'Casino Cruise', time: 'Night', activity: 'Entertainment & dining' },
+                { name: 'Calangute Beach', time: 'Morning', activity: 'Parasailing & jet skiing' }
+            ]
+        },
+        manali: {
+            name: 'Manali',
+            icon: '🏔️',
+            places: [
+                { name: 'Rohtang Pass', time: 'Morning', activity: 'Snow activities & scenic views' },
+                { name: 'Solang Valley', time: 'Morning', activity: 'Paragliding & cable car ride' },
+                { name: 'Hadimba Temple', time: 'Morning', activity: 'Ancient temple in cedar forest' },
+                { name: 'Old Manali', time: 'Afternoon', activity: 'Cafe hopping & shopping' },
+                { name: 'Jogini Waterfalls', time: 'Morning', activity: 'Trekking through villages' },
+                { name: 'Vashisht Hot Springs', time: 'Evening', activity: 'Natural hot water baths' },
+                { name: 'Manu Temple', time: 'Morning', activity: 'Spiritual visit & architecture' },
+                { name: 'Mall Road', time: 'Evening', activity: 'Shopping & local food' },
+                { name: 'Beas River', time: 'Morning', activity: 'River rafting adventure' },
+                { name: 'Van Vihar', time: 'Evening', activity: 'Nature park & boating' }
+            ]
+        },
+        jaipur: {
+            name: 'Jaipur',
+            icon: '🕌',
+            places: [
+                { name: 'Hawa Mahal', time: 'Morning', activity: 'Palace of Winds photography' },
+                { name: 'Amber Fort', time: 'Morning', activity: 'Elephant ride & palace tour' },
+                { name: 'City Palace', time: 'Afternoon', activity: 'Royal residence & museum' },
+                { name: 'Govind Dev Ji Temple', time: 'Morning', activity: 'Spiritual darshan & aarti' },
+                { name: 'Nahargarh Fort', time: 'Evening', activity: 'Sunset views over city' },
+                { name: 'Jhalana Leopard Safari', time: 'Morning', activity: 'Wildlife spotting in city forest' },
+                { name: 'Jantar Mantar', time: 'Afternoon', activity: 'Astronomical observatory UNESCO site' },
+                { name: 'Jal Mahal', time: 'Evening', activity: 'Water palace photography' },
+                { name: 'Albert Hall Museum', time: 'Afternoon', activity: 'Art & artifacts collection' },
+                { name: 'Bapu Bazaar', time: 'Evening', activity: 'Traditional shopping & textiles' }
+            ]
+        },
+        kerala: {
+            name: 'Kerala',
+            icon: '🌴',
+            places: [
+                { name: 'Alleppey Backwaters', time: 'Morning', activity: 'Houseboat cruise experience' },
+                { name: 'Munnar Tea Gardens', time: 'Morning', activity: 'Tea plantation tour & tasting' },
+                { name: 'Periyar Wildlife Sanctuary', time: 'Morning', activity: 'Elephant & tiger safari' },
+                { name: 'Kovalam Beach', time: 'Evening', activity: 'Beach relaxation & lighthouse' },
+                { name: 'Athirapally Waterfalls', time: 'Afternoon', activity: 'Kerala\'s Niagara photography' },
+                { name: 'Fort Kochi', time: 'Afternoon', activity: 'Chinese fishing nets & colonial heritage' },
+                { name: 'Varkala Beach', time: 'Evening', activity: 'Cliff beach & sunset' },
+                { name: 'Wayanad Hills', time: 'Morning', activity: 'Trekking & wildlife' },
+                { name: 'Kumarakom Bird Sanctuary', time: 'Morning', activity: 'Bird watching cruise' },
+                { name: 'Thekkady', time: 'Morning', activity: 'Spice plantation tour' }
+            ]
+        },
+        ladakh: {
+            name: 'Ladakh',
+            icon: '🏔️',
+            places: [
+                { name: 'Pangong Lake', time: 'Morning', activity: 'Blue water lake photography' },
+                { name: 'Nubra Valley', time: 'Morning', activity: 'Sand dunes & double-humped camels' },
+                { name: 'Khardung La Pass', time: 'Morning', activity: 'World\'s highest motorable road' },
+                { name: 'Leh Palace', time: 'Afternoon', activity: 'Royal palace & panoramic views' },
+                { name: 'Thiksey Monastery', time: 'Morning', activity: 'Buddhist monastery & morning prayer' },
+                { name: 'Magnetic Hill', time: 'Afternoon', activity: 'Gravity-defying phenomenon' },
+                { name: 'Shanti Stupa', time: 'Evening', activity: 'Peace pagoda & sunset views' },
+                { name: 'Tso Moriri Lake', time: 'Morning', activity: 'High altitude wetland reserve' },
+                { name: 'Hemis Monastery', time: 'Morning', activity: 'Largest monastery in Ladakh' },
+                { name: 'Diskit Monastery', time: 'Afternoon', activity: 'Giant Buddha statue' }
+            ]
+        },
+        rishikesh: {
+            name: 'Rishikesh',
+            icon: '🕉️',
+            places: [
+                { name: 'Laxman Jhula', time: 'Morning', activity: 'Iconic suspension bridge walk' },
+                { name: 'Ram Jhula', time: 'Morning', activity: 'River views & temples' },
+                { name: 'Beatles Ashram', time: 'Afternoon', activity: 'Graffiti & meditation halls' },
+                { name: 'Triveni Ghat', time: 'Evening', activity: 'Ganga Aarti ceremony' },
+                { name: 'Neer Garh Waterfall', time: 'Afternoon', activity: 'Trekking & natural pools' },
+                { name: 'Parmarth Niketan', time: 'Evening', activity: 'Evening aarti & yoga' },
+                { name: 'Rajaji National Park', time: 'Morning', activity: 'Wildlife safari & elephants' },
+                { name: 'Kunjapuri Temple', time: 'Morning', activity: 'Sunrise trek & Himalayan views' },
+                { name: 'Shivpuri', time: 'Morning', activity: 'White water rafting adventure' },
+                { name: 'Jumpin Heights', time: 'Afternoon', activity: 'Bungee jumping & giant swing' }
+            ]
+        }
+    };
+
+    let demoSelectedDestination = '';
+
+    // Populate destinations
+    const destinationGrid = document.getElementById('destinationGridDemo');
+    Object.keys(demoDestinations).forEach(key => {
+        const dest = demoDestinations[key];
+        const card = document.createElement('div');
+        card.className = 'demo-destination-card';
+        card.dataset.destination = key;
+        card.innerHTML = `
+            <span class="demo-dest-icon">${dest.icon}</span>
+            <div class="demo-dest-name">${dest.name}</div>
+        `;
+        card.onclick = () => selectDemoDestination(key);
+        destinationGrid.appendChild(card);
+    });
+
+    function selectDemoDestination(dest) {
+        demoSelectedDestination = dest;
+        document.querySelectorAll('.demo-destination-card').forEach(card => {
+            card.classList.remove('demo-selected');
+        });
+        document.querySelector(`[data-destination="${dest}"]`).classList.add('demo-selected');
+    }
+
+    document.getElementById('generateBtnDemo').addEventListener('click', generateDemoItinerary);
+
+    function generateDemoItinerary() {
+        const budget = document.getElementById('budget-demo').value;
+        const days = parseInt(document.getElementById('days-demo').value);
+        const style = document.getElementById('style-demo').value;
+
+        if (!budget || !days || !style || !demoSelectedDestination) {
+            alert('Please fill in all fields and select a destination!');
+            return;
+        }
+
+        const btn = document.getElementById('generateBtnDemo');
+        btn.disabled = true;
+        btn.classList.add('demo-loading');
+        document.getElementById('btnTextDemo').textContent = '⏳ Generating your perfect trip...';
+
+        setTimeout(() => {
+            const destData = demoDestinations[demoSelectedDestination];
+            const dailyBudget = Math.floor(budget / days);
+            
+            // Shuffle places for variety
+            const shuffledPlaces = [...destData.places].sort(() => Math.random() - 0.5);
+            
+            let resultHTML = `
+                <div class="demo-result-header">
+                    <h2>${destData.icon} Your ${destData.name} ${style.charAt(0).toUpperCase() + style.slice(1)} Adventure</h2>
+                    <div class="demo-trip-meta">
+                        <div class="demo-meta-item">
+                            <span>📅</span>
+                            <strong>${days} Days</strong>
+                        </div>
+                        <div class="demo-meta-item">
+                            <span>💰</span>
+                            <strong>₹${parseInt(budget).toLocaleString()}</strong>
+                        </div>
+                        <div class="demo-meta-item">
+                            <span>🎨</span>
+                            <strong>${style.charAt(0).toUpperCase() + style.slice(1)}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-itinerary-grid">
+            `;
+
+            let placeIndex = 0;
+            for (let day = 1; day <= days; day++) {
+                const dayCost = dailyBudget + (Math.random() * 1000 - 500);
+                const numActivities = Math.min(3, shuffledPlaces.length - placeIndex);
+                
+                resultHTML += `
+                    <div class="demo-day-card">
+                        <div class="demo-day-header">
+                            <h3>Day ${day}</h3>
+                            <div class="demo-day-cost">₹${Math.floor(dayCost).toLocaleString()}</div>
+                        </div>
+                        <div class="demo-activities-list">
+                `;
+
+                for (let i = 0; i < numActivities; i++) {
+                    if (placeIndex >= shuffledPlaces.length) placeIndex = 0;
+                    const place = shuffledPlaces[placeIndex++];
+                    
+                    resultHTML += `
+                        <div class="demo-activity-item">
+                            <div class="demo-activity-icon">📍</div>
+                            <div class="demo-activity-content">
+                                <h4>${place.name}</h4>
+                                <div class="demo-activity-time">${place.time}</div>
+                                <div class="demo-activity-desc">${place.activity}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                resultHTML += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            resultHTML += `</div>`;
+
+            // Budget breakdown
+            const flightCost = Math.floor(budget * 0.3);
+            const hotelCost = Math.floor(budget * 0.35);
+            const activitiesCost = Math.floor(budget * 0.25);
+            const foodCost = Math.floor(budget * 0.10);
+
+            resultHTML += `
+                <div class="demo-budget-breakdown">
+                    <h3>💰 Budget Breakdown</h3>
+                    <div class="demo-budget-item">
+                        <span>✈️ Transportation & Flights</span>
+                        <strong>₹${flightCost.toLocaleString()}</strong>
+                    </div>
+                    <div class="demo-budget-item">
+                        <span>🏨 Accommodation</span>
+                        <strong>₹${hotelCost.toLocaleString()}</strong>
+                    </div>
+                    <div class="demo-budget-item">
+                        <span>🎯 Activities & Attractions</span>
+                        <strong>₹${activitiesCost.toLocaleString()}</strong>
+                    </div>
+                    <div class="demo-budget-item">
+                        <span>🍽️ Food & Dining</span>
+                        <strong>₹${foodCost.toLocaleString()}</strong>
+                    </div>
+                    <div class="demo-budget-item">
+                        <span>Total Budget</span>
+                        <strong>₹${parseInt(budget).toLocaleString()}</strong>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resultsContainerDemo').innerHTML = resultHTML;
+            document.getElementById('resultsContainerDemo').classList.add('demo-show');
+            document.getElementById('placeholderDemo').style.display = 'none';
+
+            btn.disabled = false;
+            btn.classList.remove('demo-loading');
+            document.getElementById('btnTextDemo').textContent = '🚀 Generate My Itinerary';
+
+            // Smooth scroll to results
+            document.getElementById('resultsContainerDemo').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'nearest' 
+            });
+        }, 2000);
+    }
+})();
+</script>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <h2 class="section-title">Perfect For Every Traveler</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-icon">🧑‍🎓</div>
+                <h4>Young Travelers</h4>
+                <p>"Helps me plan budget trips fast and efficiently. No more hours of research!"</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-icon">👨‍👩‍👧‍👦</div>
+                <h4>Families</h4>
+                <p>"Perfect for organized group vacations. Everyone's happy with the itinerary!"</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-icon">🌍</div>
+                <h4>Frequent Travelers</h4>
+                <p>"Saves hours of manual research. I can focus on enjoying the journey."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-section" id="about">
+        <h2 class="section-title">About My Travel Buddy</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <h3>Our Mission</h3>
+                <p>My Travel Buddy was born from a simple idea: travel planning shouldn't be stressful. We believe that everyone deserves to explore the world without spending countless hours researching, comparing prices, and organizing itineraries.</p>
+                
+                <h3>What We Do</h3>
+                <p>We leverage cutting-edge AI technology to create personalized travel itineraries that fit your budget, preferences, and style. Whether you're a solo backpacker, a family on vacation, or a frequent business traveler, our smart planner adapts to your unique needs.</p>
+                
+                <h3>Our Vision</h3>
+                <p>We envision a world where travel planning is as enjoyable as the journey itself. By combining artificial intelligence with real-world travel insights, we're making smart, budget-conscious travel accessible to everyone.</p>
+                
+                <h3>The Technology</h3>
+                <p>Built with modern web technologies and powered by intelligent algorithms, My Travel Buddy analyzes thousands of travel options to suggest the best routes, accommodations, and experiences within your budget. Our platform integrates with real-time data to ensure you get the most accurate and up-to-date information.</p>
+            </div>
+        </div>
+    </section>
+
+   <!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to plan your next adventure?</h2>
+    
+</section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>My Travel Buddy</h3>
+                <p style="color: #64748b;">Travel made simple.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="build/index.html">Demo</a></li>
+                    <li><a href="javascript:void(0)" onclick="openModal('contactModal')">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul class="footer-links">
+                    <li><a href="javascript:void(0)" onclick="openModal('privacyModal')">Privacy Policy</a></li>
+                    <li><a href="javascript:void(0)" onclick="openModal('termsModal')">Terms of Service</a></li>
+                    <li><a href="javascript:void(0)" onclick="openModal('faqModal')">FAQ</a></li>
+                    <li><a href="javascript:void(0)" onclick="openModal('helpModal')">Help Center</a></li>
+                    <li><a href="javascript:void(0)" onclick="openModal('sitemapModal')">Sitemap</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <div class="social-links">
+                    <a href="https://instagram.com" target="_blank" class="social-icon" title="Instagram">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                    <a href="https://youtube.com" target="_blank" class="social-icon" title="YouTube">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="social-icon" title="Twitter">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 My Travel Buddy. Travel made simple with Us.</p>
+        </div>
+    </footer>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content legal-modal">
+            <span class="close" onclick="closeModal('privacyModal')">&times;</span>
+            <h2>Privacy Policy</h2>
+            <div class="legal-content">
+                <p><strong>Last Updated:</strong> October 2025</p>
+                
+                <h3>1. Information We Collect</h3>
+                <p>We collect information that you provide directly to us, including:</p>
+                <ul>
+                    <li>Account information (name, email, password)</li>
+                    <li>Travel preferences and itinerary details</li>
+                    <li>Payment information (processed securely through third-party providers)</li>
+                    <li>Communication data when you contact us</li>
+                </ul>
+                
+                <h3>2. How We Use Your Information</h3>
+                <p>We use the information we collect to:</p>
+                <ul>
+                    <li>Provide and improve our travel planning services</li>
+                    <li>Generate personalized itineraries based on your preferences</li>
+                    <li>Send you service-related communications</li>
+                    <li>Analyze usage patterns to enhance user experience</li>
+                    <li>Comply with legal obligations</li>
+                </ul>
+                
+                <h3>3. Information Sharing</h3>
+                <p>We do not sell your personal information. We may share your data with:</p>
+                <ul>
+                    <li>Service providers who assist in our operations</li>
+                    <li>Travel partners for booking purposes (with your consent)</li>
+                    <li>Legal authorities when required by law</li>
+                </ul>
+                
+                <h3>4. Data Security</h3>
+                <p>We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.</p>
+                
+                <h3>5. Your Rights</h3>
+                <p>You have the right to:</p>
+                <ul>
+                    <li>Access and update your personal information</li>
+                    <li>Delete your account and associated data</li>
+                    <li>Opt-out of marketing communications</li>
+                    <li>Request a copy of your data</li>
+                </ul>
+                
+                <h3>6. Cookies</h3>
+                <p>We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. You can control cookie preferences through your browser settings.</p>
+                
+                <h3>7. Contact Us</h3>
+                <p>For privacy-related questions, please contact us at privacy@mytravelbuddy.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content legal-modal">
+            <span class="close" onclick="closeModal('termsModal')">&times;</span>
+            <h2>Terms of Service</h2>
+            <div class="legal-content">
+                <p><strong>Effective Date:</strong> October 2025</p>
+                
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing and using My Travel Buddy, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.</p>
+                
+                <h3>2. Service Description</h3>
+                <p>My Travel Buddy provides AI-powered travel planning tools, including itinerary generation, budget planning, and travel recommendations. Our services are provided "as is" without warranties of any kind.</p>
+                
+                <h3>3. User Accounts</h3>
+                <p>To use certain features, you must create an account. You are responsible for:</p>
+                <ul>
+                    <li>Maintaining the confidentiality of your account credentials</li>
+                    <li>All activities that occur under your account</li>
+                    <li>Notifying us of any unauthorized access</li>
+                </ul>
+                
+                <h3>4. User Conduct</h3>
+                <p>You agree not to:</p>
+                <ul>
+                    <li>Use the service for any illegal purpose</li>
+                    <li>Attempt to gain unauthorized access to our systems</li>
+                    <li>Interfere with the proper functioning of the service</li>
+                    <li>Upload malicious code or harmful content</li>
+                    <li>Impersonate others or provide false information</li>
+                </ul>
+                
+                <h3>5. Intellectual Property</h3>
+                <p>All content, features, and functionality of My Travel Buddy are owned by us and protected by copyright, trademark, and other intellectual property laws.</p>
+                
+                <h3>6. Third-Party Services</h3>
+                <p>Our platform may integrate with third-party services (hotels, airlines, etc.). We are not responsible for the actions, content, or policies of these third parties.</p>
+                
+                <h3>7. Limitation of Liability</h3>
+                <p>My Travel Buddy shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our services. We provide travel suggestions only; actual bookings and travel arrangements are your responsibility.</p>
+                
+                <h3>8. Changes to Terms</h3>
+                <p>We reserve the right to modify these terms at any time. Continued use of the service after changes constitutes acceptance of the modified terms.</p>
+                
+                <h3>9. Termination</h3>
+                <p>We may terminate or suspend your account at any time for violation of these terms or for any other reason at our discretion.</p>
+                
+                <h3>10. Contact</h3>
+                <p>For questions about these terms, contact us at legal@mytravelbuddy.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sitemap Modal -->
+    <div id="sitemapModal" class="modal">
+        <div class="modal-content legal-modal">
+            <span class="close" onclick="closeModal('sitemapModal')">&times;</span>
+            <h2>Sitemap</h2>
+            <div class="legal-content sitemap-content">
+                <div class="sitemap-section">
+                    <h3>Main Pages</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="build/index.html">Demo / Try it Now</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('contactModal')">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="sitemap-section">
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Budget Planning</li>
+                        <li>Smart Itinerary Generator</li>
+                        <li>Maps Integration</li>
+                        <li>Flight & Hotel Simulation</li>
+                    </ul>
+                </div>
+                
+                <div class="sitemap-section">
+                    <h3>User Account</h3>
+                    <ul>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); window.location.href='build/index.html#auth'; switchTab('signin')">Sign In</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); window.location.href='build/index.html#auth'; switchTab('register')">Register</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('itinerariesModal')">My Itineraries</a></li>
+                        <li>Profile Settings</li>
+                    </ul>
+                </div>
+                
+                <div class="sitemap-section">
+                    <h3>Legal & Information</h3>
+                    <ul>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('privacyModal')">Privacy Policy</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('termsModal')">Terms of Service</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('faqModal')">FAQ</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('helpModal')">Help Center</a></li>
+                    </ul>
+                </div>
+                
+                <div class="sitemap-section">
+                    <h3>Connect With Us</h3>
+                    <ul>
+                        <li><a href="https://instagram.com" target="_blank">Instagram</a></li>
+                        <li><a href="https://youtube.com" target="_blank">YouTube</a></li>
+                        <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content legal-modal">
+            <span class="close" onclick="closeModal('contactModal')">&times;</span>
+            <h2>Contact Us</h2>
+            <div class="legal-content">
+                <p>We'd love to hear from you! Get in touch with us through any of the following channels:</p>
+                
+                <div class="contact-info">
+                    <h3>📧 Email</h3>
+                    <p>support@mytravelbuddy.com</p>
+                    
+                    <h3>📱 Social Media</h3>
+                    <p>Follow us on Instagram, YouTube, and Twitter for travel tips and updates!</p>
+                    
+                    <h3>💬 Send Us a Message</h3>
+                    <input type="text" placeholder="Your Name" class="auth-input">
+                    <input type="email" placeholder="Your Email" class="auth-input">
+                    <textarea placeholder="Your Message" class="auth-input" rows="5"></textarea>
+                    <button class="auth-submit">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div id="faqModal" class="modal">
+        <div class="modal-content legal-modal">
+            <span class="close" onclick="closeModal('faqModal')">&times;</span>
+            <h2>Frequently Asked Questions</h2>
+            <div class="legal-content">
+                <div class="faq-item">
+                    <h3>What is My Travel Buddy?</h3>
+                    <p>My Travel Buddy is an AI-powered travel planning platform that creates personalized itineraries based on your budget, travel style, and preferences. We help you plan smarter and travel better.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>How does the budget planning work?</h3>
+                    <p>Simply enter your total budget, number of days, and travel preferences. Our AI algorithm will optimize your itinerary to include flights, accommodations, attractions, and meals within your specified budget.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Is My Travel Buddy free to use?</h3>
+                    <p>Yes! Basic itinerary planning is completely free. We offer premium features for advanced customization and exclusive travel deals for subscribed members.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Can I modify the generated itinerary?</h3>
+                    <p>Absolutely! All itineraries are fully customizable. You can add, remove, or rearrange activities, change accommodations, and adjust your schedule as needed.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Do you actually book flights and hotels?</h3>
+                    <p>Currently, we provide recommendations and simulate booking options. You can use our suggestions to book directly with providers. We're working on integrated booking features coming soon!</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Can I save multiple itineraries?</h3>
+                    <p>Yes! Once you sign in, you can save unlimited itineraries, access them anytime, and share them with travel companions.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Which destinations do you cover?</h3>
+                    <p>We cover destinations worldwide! Our database includes thousands of cities, attractions, and travel routes across all continents.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>How accurate are the budget estimates?</h3>
+                    <p>Our estimates are based on current market data and real-time pricing. However, actual costs may vary depending on season, availability, and booking timing. We recommend adding a 10-15% buffer to your budget.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Can I use My Travel Buddy on mobile?</h3>
+                    <p>Yes! Our website is fully responsive and works seamlessly on smartphones and tablets. A dedicated mobile app is also in development.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>How do I export my itinerary?</h3>
+                    <p>You can export your itinerary as a PDF, share it via email, or generate a shareable link for your travel companions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Center Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content legal-modal">
+            <span class="close" onclick="closeModal('helpModal')">&times;</span>
+            <h2>Help Center</h2>
+            <div class="legal-content">
+                <h3>Getting Started</h3>
+                
+                <div class="help-section">
+                    <h4>1. Create Your Account</h4>
+                    <p>Click "Sign In / Register" in the navigation bar and create a free account. You'll need a valid email address to get started.</p>
+                </div>
+                
+                <div class="help-section">
+                    <h4>2. Plan Your First Trip</h4>
+                    <p>Navigate to the demo section or click "Start Planning." Enter your:</p>
+                    <ul>
+                        <li><strong>Budget:</strong> Total amount you're willing to spend</li>
+                        <li><strong>Duration:</strong> Number of days for your trip</li>
+                        <li><strong>Travel Style:</strong> Adventure, Relaxation, Cultural, Budget, or Luxury</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h4>3. Review Your Itinerary</h4>
+                    <p>Our AI will generate a detailed day-by-day itinerary including:</p>
+                    <ul>
+                        <li>Accommodation suggestions</li>
+                        <li>Daily activities and attractions</li>
+                        <li>Meal recommendations</li>
+                        <li>Transportation options</li>
+                        <li>Budget breakdown</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h4>4. Customize & Save</h4>
+                    <p>Make any adjustments to your itinerary, then save it to your profile. You can access saved itineraries anytime from "My Itineraries."</p>
+                </div>
+                
+                <h3>Common Issues</h3>
+                
+                <div class="help-section">
+                    <h4>Can't sign in?</h4>
+                    <p>Try resetting your password or clearing your browser cache. If issues persist, contact support@mytravelbuddy.com</p>
+                </div>
+                
+                <div class="help-section">
+                    <h4>Itinerary not generating?</h4>
+                    <p>Ensure all required fields are filled. Check your internet connection and try refreshing the page.</p>
+                </div>
+                
+                <div class="help-section">
+                    <h4>Budget seems incorrect?</h4>
+                    <p>Budget calculations are estimates. Adjust currency settings in your profile if needed. Prices may vary based on seasonality.</p>
+                </div>
+                
+                <h3>Need More Help?</h3>
+                <p>Contact our support team at <strong>support@mytravelbuddy.com</strong> or use the contact form. We typically respond within 24 hours.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Itineraries Modal (Saved Itineraries) -->
+    <div id="itinerariesModal" class="modal">
+        <div class="modal-content legal-modal" style="max-width: 1000px;">
+            <span class="close" onclick="closeModal('itinerariesModal')">&times;</span>
+            <h2>My Saved Itineraries</h2>
+            <div class="legal-content">
+                <div id="itinerariesList" class="itineraries-grid">
+                    <!-- Sample saved itineraries -->
+                    <div class="itinerary-card">
+                        <div class="itinerary-header">
+                            <h3>🏖️ Goa Beach Getaway</h3>
+                            <span class="itinerary-date">Saved: Oct 1, 2024</span>
+                        </div>
+                        <div class="itinerary-details">
+                            <p><strong>Duration:</strong> 5 Days</p>
+                            <p><strong>Budget:</strong> ₹45,000</p>
+                            <p><strong>Style:</strong> Relaxation</p>
+                        </div>
+                        <div class="itinerary-actions">
+                            <button class="itinerary-btn view-btn">View</button>
+                            <button class="itinerary-btn edit-btn">Edit</button>
+                            <button class="itinerary-btn delete-btn">Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div class="itinerary-card">
+                        <div class="itinerary-header">
+                            <h3>🏔️ Himachal Adventure</h3>
+                            <span class="itinerary-date">Saved: Sep 28, 2024</span>
+                        </div>
+                        <div class="itinerary-details">
+                            <p><strong>Duration:</strong> 7 Days</p>
+                            <p><strong>Budget:</strong> ₹60,000</p>
+                            <p><strong>Style:</strong> Adventure</p>
+                        </div>
+                        <div class="itinerary-actions">
+                            <button class="itinerary-btn view-btn">View</button>
+                            <button class="itinerary-btn edit-btn">Edit</button>
+                            <button class="itinerary-btn delete-btn">Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div class="itinerary-card">
+                        <div class="itinerary-header">
+                            <h3>🕌 Rajasthan Heritage Tour</h3>
+                            <span class="itinerary-date">Saved: Sep 20, 2024</span>
+                        </div>
+                        <div class="itinerary-details">
+                            <p><strong>Duration:</strong> 10 Days</p>
+                            <p><strong>Budget:</strong> ₹80,000</p>
+                            <p><strong>Style:</strong> Cultural</p>
+                        </div>
+                        <div class="itinerary-actions">
+                            <button class="itinerary-btn view-btn">View</button>
+                            <button class="itinerary-btn edit-btn">Edit</button>
+                            <button class="itinerary-btn delete-btn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 30px; color: #64748b;">
+                    <em>Sign in to save and manage your travel itineraries</em>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Auth tab switching
+        function switchTab(tab) {
+            const signinForm = document.getElementById('signin-form');
+            const registerForm = document.getElementById('register-form');
+            const tabs = document.querySelectorAll('.auth-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'signin') {
+                signinForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                tabs[0].classList.add('active');
+            } else {
+                signinForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                tabs[1].classList.add('active');
+            }
+        }
+
+        // Smooth scroll effect
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Navbar transparency on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+
+
+       // Demo form interaction
+        const generateBtn = document.querySelector('.generate-btn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', function() {
+                const budget = document.getElementById('budget').value;
+                const days = document.getElementById('days').value;
+                const style = document.getElementById('style').value;
+                
+                if (budget && days) {
+                    alert(`Generating ${days}-day ${style} trip for ₹${budget}! 🎉`);
+                } else {
+                    alert('Please fill in all fields to generate your itinerary.');
+                }
+            });
+        }
+        function checkAuthAndPlan() {
+    const currentUser = localStorage.getItem('current_user');
+    
+    if (!currentUser) {
+        if (confirm('Please sign in to start planning your trip!\n\nClick OK to go to Sign In page.')) {
+            window.location.href = 'build/index.html#auth';
+        }
+    } else {
+        // User is logged in - open planning page in new tab
+        window.open('planning.html', '_blank');
+    }
+}
+    </script>
+    <script src="planning.js"></script>
+    <script>
+// Check if user is logged in and update the button
+function updateAuthButton() {
+    const currentUser = localStorage.getItem('current_user');
+    const authButton = document.querySelector('.cta-button');
+    const authLink = authButton.parentElement;
+    
+    if (currentUser) {
+        try {
+            const user = JSON.parse(currentUser);
+            // Change button text and style
+            authButton.textContent = `👤 ${user.name}`;
+            authButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            authButton.style.color = 'white';
+            
+            // Remove the href from parent link
+            authLink.removeAttribute('href');
+            authLink.style.cursor = 'pointer';
+            
+            // Add click handler to show dropdown menu
+            authButton.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                showUserMenu(e, user);
+            };
+        } catch (error) {
+            console.error('Error parsing user data:', error);
+        }
+    }
+}
+
+// Show user dropdown menu
+function showUserMenu(event, user) {
+    // Remove any existing menu
+    const existingMenu = document.getElementById('userDropdownMenu');
+    if (existingMenu) {
+        existingMenu.remove();
+        return;
+    }
+    
+    // Create dropdown menu
+    const menu = document.createElement('div');
+    menu.id = 'userDropdownMenu';
+    menu.style.cssText = `
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        padding: 12px;
+        min-width: 200px;
+        z-index: 9999;
+        animation: slideDown 0.3s ease;
+    `;
+    
+    menu.innerHTML = `
+        <style>
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .menu-item {
+                padding: 12px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 500;
+            }
+            .menu-item:hover {
+                background: #f3f4f6;
+                transform: translateX(4px);
+            }
+            .menu-divider {
+                height: 1px;
+                background: #e5e7eb;
+                margin: 8px 0;
+            }
+        </style>
+        <div style="padding: 12px 16px; border-bottom: 2px solid #e5e7eb; margin-bottom: 8px;">
+            <div style="font-weight: 600; color: #111827;">${user.name}</div>
+            <div style="font-size: 12px; color: #6b7280;">${user.email}</div>
+        </div>
+        <div class="menu-item" onclick="goToProfile()">
+            <span style="font-size: 20px;">👤</span>
+            <span>My Profile</span>
+        </div>
+        
+        <div class="menu-divider"></div>
+        <div class="menu-item" onclick="handleLogout()" style="color: #dc2626;">
+            <span style="font-size: 20px;">🚪</span>
+            <span>Logout</span>
+        </div>
+    `;
+    
+    document.body.appendChild(menu);
+    
+    // Close menu when clicking outside
+    setTimeout(() => {
+        document.addEventListener('click', function closeMenu(e) {
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('click', closeMenu);
+            }
+        });
+    }, 100);
+}
+
+// Menu action functions
+function goToProfile() {
+    window.location.href = 'build/index.html';
+}
+
+function goToDashboard() {
+    window.location.href = 'build/index.html';
+}
+
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('current_user');
+        alert('Logged out successfully!');
+        window.location.reload();
+    }
+}
+
+// Run on page load
+window.addEventListener('DOMContentLoaded', updateAuthButton);
+
+// Also check periodically in case user logs in/out
+setInterval(updateAuthButton, 1000);
+// Menu action functions
+function goToProfile() {
+    // Show profile modal
+    showProfileModal();
+}
+
+// Show profile modal with user info
+function showProfileModal() {
+    const currentUser = JSON.parse(localStorage.getItem('current_user'));
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('profileModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'profileModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <style>
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
+        <div style="
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        ">
+            <div style="text-center margin-bottom: 30px;">
+                <div style="
+                    width: 100px;
+                    height: 100px;
+                    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+                    border-radius: 50%;
+                    margin: 0 auto 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 48px;
+                    color: white;
+                    font-weight: bold;
+                    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+                ">
+                    ${currentUser.name.charAt(0).toUpperCase()}
+                </div>
+                <h2 style="font-size: 28px; font-weight: bold; color: #111827; margin-bottom: 8px;">
+                    My Profile
+                </h2>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%); border-radius: 16px; padding: 24px; margin-bottom: 20px;">
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #6b7280; font-size: 14px; font-weight: 600; margin-bottom: 4px;">
+                        👤 Full Name
+                    </div>
+                    <div style="color: #111827; font-size: 18px; font-weight: 600;">
+                        ${currentUser.name}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #6b7280; font-size: 14px; font-weight: 600; margin-bottom: 4px;">
+                        📧 Email Address
+                    </div>
+                    <div style="color: #111827; font-size: 16px;">
+                        ${currentUser.email}
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
+                    <div style="background: white; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <div style="font-size: 32px; margin-bottom: 8px;">✈️</div>
+                        <div style="color: #6b7280; font-size: 12px; margin-bottom: 4px;">Saved Trips</div>
+                        <div style="color: #8b5cf6; font-size: 24px; font-weight: bold;">0</div>
+                    </div>
+                    <div style="background: white; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🗺️</div>
+                        <div style="color: #6b7280; font-size: 12px; margin-bottom: 4px;">Planned Trips</div>
+                        <div style="color: #8b5cf6; font-size: 24px; font-weight: bold;">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="closeProfileModal()" style="
+                width: 100%;
+                background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+                color: white;
+                border: none;
+                padding: 14px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            " onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 10px 30px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                Close
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close on background click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeProfileModal();
+        }
+    });
+}
+
+function closeProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (modal) {
+        modal.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+</script>
+    </body>
+</html>
