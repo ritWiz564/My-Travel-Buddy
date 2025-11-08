@@ -500,7 +500,7 @@ const TravelBuddyDemo = () => {
       `}</style>
       {showAuth && (
   <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-30">
-    <AuthPage onBackToDemo={() => window.location.href = '../travel2a.html'} />
+    <AuthPage onBackToDemo={() => window.location.href = '../index.html'} />
   </div>
 )}
     </div>
