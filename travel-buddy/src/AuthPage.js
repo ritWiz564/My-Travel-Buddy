@@ -175,6 +175,11 @@ const AuthPage = ({ onBackToDemo = () => {} }) => {
     setMessage({ text: '', type: '' });
   };
 
+  // Navigate to root index.html
+  const goToHome = () => {
+    window.location.href = '../index.html';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
@@ -192,11 +197,11 @@ const AuthPage = ({ onBackToDemo = () => {} }) => {
               🌍 My Travel Buddy
             </div>
             <button 
-onClick={() => window.location.href = 'index.html'}
-  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2">
-  <ArrowLeft className="w-4 h-4" />
-  Back to Home
-</button>
+              onClick={goToHome}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </button>
           </div>
         </nav>
 
@@ -239,11 +244,11 @@ onClick={() => window.location.href = 'index.html'}
 
             <div className="flex gap-4">
               <button
-  onClick={() => window.location.href = 'index.html'}
-  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all"
->
-  Start Planning Trip
-</button>
+                onClick={goToHome}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all"
+              >
+                Start Planning Trip
+              </button>
               <button
                 onClick={handleLogout}
                 className="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all"
@@ -265,11 +270,11 @@ onClick={() => window.location.href = 'index.html'}
             🌍 My Travel Buddy
           </div>
           <button 
-onClick={() => window.location.href = 'index.html'}
-  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2">
-  <ArrowLeft className="w-4 h-4" />
-  Back to Home
-</button>
+            onClick={goToHome}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </button>
         </div>
       </nav>
 
