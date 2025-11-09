@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AuthPage from './AuthPage';
-import { Plane, MapPin, Calendar, DollarSign, Download, Share2, Sparkles, ChevronRight } from 'lucide-react';
+import { Plane, MapPin, Calendar, DollarSign, Sparkles } from 'lucide-react';
 
 const TravelBuddyDemo = () => {
   const [showAuth, setShowAuth] = useState(false);
@@ -258,7 +258,7 @@ const TravelBuddyDemo = () => {
                     {step}
                   </div>
                   <div className="text-sm mt-2 font-medium">
-                    {step === 1 ? 'Input Details' : step === 2 ? 'Generate' : 'Export & Share'}
+                    {step === 1 ? 'Input Details' : step === 2 ? 'Generate' : 'View Results'}
                   </div>
                 </div>
               ))}
@@ -450,12 +450,6 @@ const TravelBuddyDemo = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* CTA */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl p-6 text-center">
-                  <h3 className="text-2xl font-bold mb-2">Love This Itinerary? 🎉</h3>
-                  <p className="mb-4">Start planning your real trip with personalized recommendations!</p>
-                   </div>
               </div>
             )}
           </div>
