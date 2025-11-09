@@ -176,8 +176,8 @@ const AuthPage = ({ onBackToDemo = () => {} }) => {
   };
 
   // Navigate to root index.html
-  const goToHome = () => {
-    window.location.href = '../index.html';
+ const goToHome = () => {
+    window.location.href = '/';
   };
 
   if (loading) {
