@@ -169,10 +169,7 @@ const TravelBuddyDemo = () => {
       const destData = destinations[destination];
       const dailyBudget = Math.floor(budget / duration);
       
-      // Get all places for this destination
       const allPlaces = [...destData.places];
-      
-      // Shuffle places to ensure variety
       const shuffledPlaces = allPlaces.sort(() => Math.random() - 0.5);
       
       const days = [];
@@ -183,10 +180,9 @@ const TravelBuddyDemo = () => {
         const dayActivities = [];
         const numActivities = 3 + Math.floor(Math.random() * 2);
         
-        // Get unique places for this day
         for (let i = 0; i < numActivities; i++) {
           if (placeIndex >= shuffledPlaces.length) {
-            placeIndex = 0; // Reset if we run out of places
+            placeIndex = 0;
           }
           
           const place = shuffledPlaces[placeIndex];
