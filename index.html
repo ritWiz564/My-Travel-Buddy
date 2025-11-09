@@ -15,11 +15,11 @@
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#features">Features</a></li>
-            <li><a href="travel-buddy/build/index.html">Demo</a></li>
+            <li><a href="./build/index.html">Demo</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="javascript:void(0)" onclick="openModal('contactModal')">Contact</a></li>
         </ul>
-        <a href="travel-buddy/build/index.html#auth" style="text-decoration: none;">
+        <a href="./build/index.html#auth" style="text-decoration: none;">
     <button class="cta-button">Sign In / Register</button>
 </a>
     </nav>
@@ -32,7 +32,7 @@
             <p>Your AI-powered travel planner that fits your budget and style.</p>
             <div class="hero-buttons">
             <button class="btn-primary" onclick="checkAuthAndPlan()">Start Planning</button>                
-<button class="btn-secondary" onclick="window.location.href='travel-buddy/build/index.html'">Explore Demo</button>            </div>
+<button class="btn-secondary" onclick="window.location.href='./build/index.html'">Explore Demo</button>            </div>
         </div>
     </section>
 
@@ -429,7 +429,7 @@
                 <ul class="footer-links">
                     <li><a href="#about">About</a></li>
                     <li><a href="#features">Features</a></li>
-                    <li><a href="travel-buddy/build/index.html">Demo</a></li>
+                    <li><a href="./build/index.html">Demo</a></li>
                     <li><a href="javascript:void(0)" onclick="openModal('contactModal')">Contact</a></li>
                 </ul>
             </div>
@@ -589,7 +589,7 @@
                     <ul>
                         <li><a href="#home">Home</a></li>
                         <li><a href="#features">Features</a></li>
-                        <li><a href="build/index.html">Demo / Try it Now</a></li>
+                        <li><a href="./build/index.html">Demo / Try it Now</a></li>
                         <li><a href="#about">About Us</a></li>
                         <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('contactModal')">Contact</a></li>
                     </ul>
@@ -608,8 +608,8 @@
                 <div class="sitemap-section">
                     <h3>User Account</h3>
                     <ul>
-                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); window.location.href='build/index.html#auth'; switchTab('signin')">Sign In</a></li>
-                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); window.location.href='build/index.html#auth'; switchTab('register')">Register</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); window.location.href='./build/index.html#auth'; switchTab('signin')">Sign In</a></li>
+                        <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); window.location.href='./build/index.html#auth'; switchTab('register')">Register</a></li>
                         <li><a href="javascript:void(0)" onclick="closeModal('sitemapModal'); openModal('itinerariesModal')">My Itineraries</a></li>
                         <li>Profile Settings</li>
                     </ul>
@@ -933,11 +933,11 @@
         
         if (!currentUser) {
             if (confirm('Please sign in to start planning your trip!\n\nClick OK to go to Sign In page.')) {
-                window.location.href = 'travel-buddy/build/index.html#auth';  // ← ADD travel-buddy/
+                window.location.href = './build/index.html#auth';  // ← ADD travel-buddy/
             }
         } else {
             // User is logged in - redirect to React app
-            window.location.href = 'planning.html';  // ← CHANGE THIS LINE
+            window.location.href = './planning.html';  // ← CHANGE THIS LINE
         }
     }
     </script>
@@ -1055,11 +1055,11 @@ function showUserMenu(event, user) {
 
 // Menu action functions
 function goToProfile() {
-    window.location.href = 'travel-buddy/build/index.html';  // ← ADD travel-buddy/
+     showProfileModal();
 }
 
 function goToDashboard() {
-    window.location.href = 'build/index.html';
+    window.location.href = './build/index.html';
 }
 
 function handleLogout() {
