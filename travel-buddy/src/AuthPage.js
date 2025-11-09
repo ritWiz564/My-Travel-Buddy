@@ -175,9 +175,24 @@ const AuthPage = ({ onBackToDemo = () => {} }) => {
     setMessage({ text: '', type: '' });
   };
 
-  // Navigate to root index.html
- const goToHome = () => {
-    window.location.href = '/';
+  // Navigate to root index.html - Multiple fallback methods
+  const goToHome = () => {
+    // Get current path
+    const currentPath = window.location.pathname;
+    console.log('Current path:', currentPath);
+    
+    // Try multiple navigation methods
+    if (currentPath.includes('/build/')) {
+      // We're in build folder, go up one level
+      window.location.href = '../index.html';
+    } else if (currentPath.includes('build')) {
+      window.location.href = '../index.html';
+    } else {
+      // Fallback: try absolute path from domain root
+      const protocol = window.location.protocol;
+      const host = window.location.host;
+      window.location.href = `${protocol}//${host}/index.html`;
+    }
   };
 
   if (loading) {
