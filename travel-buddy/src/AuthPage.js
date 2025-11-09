@@ -178,7 +178,7 @@ const AuthPage = ({ onBackToDemo = () => {} }) => {
   // FIXED: Navigate to main index.html
   const goToHome = () => {
     // This will work whether we're in build/ or src/ folder
-    window.location.href = '/index.html';
+    window.location.href = '../../index.html';
   };
 
   if (loading) {
