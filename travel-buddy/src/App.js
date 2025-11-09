@@ -451,27 +451,11 @@ const TravelBuddyDemo = () => {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
-                  <button className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all flex items-center justify-center gap-2">
-                    <Download className="w-4 h-4" />
-                    Download PDF
-                  </button>
-                  <button className="flex-1 bg-purple-600 text-white py-3 rounded-xl font-semibold hover:bg-purple-700 transition-all flex items-center justify-center gap-2">
-                    <Share2 className="w-4 h-4" />
-                    Share Trip
-                  </button>
-                </div>
-
                 {/* CTA */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl p-6 text-center">
                   <h3 className="text-2xl font-bold mb-2">Love This Itinerary? 🎉</h3>
                   <p className="mb-4">Start planning your real trip with personalized recommendations!</p>
-                  <button className="bg-white text-purple-600 px-8 py-3 rounded-full font-bold hover:shadow-xl transform hover:scale-105 transition-all flex items-center gap-2 mx-auto">
-                    🚀 Plan My Trip
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
+                   </div>
               </div>
             )}
           </div>
